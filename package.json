@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test jest",
     "start": "node ./bin/server.js"
   },
   "keywords": [],
@@ -21,5 +21,17 @@
     "md5": "^2.3.0",
     "mongodb-memory-server": "^6.9.6",
     "mongoose": "^5.12.2"
+  },
+  "devDependencies": {
+    "babel-jest": "^25.1.0",
+    "babel-polyfill": "^6.26.0",
+    "cross-env": "^7.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-import": "^0.13.0",
+    "jest": "^25.1.0",
+    "sinon": "^8.1.1",
+    "sinon-mongoose": "^2.3.0",
+    "supertest": "^4.0.2"
   }
 }

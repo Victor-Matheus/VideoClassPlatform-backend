@@ -1,6 +1,8 @@
-'use strict'
+"use strict";
 
-// require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
 const express = require("express");
 const mongoClient = require("mongoose");
 const cors = require("cors");
@@ -19,9 +21,17 @@ const connectDB = async () => {
 };
 connectDB();
 
+const users = require("./models/user");
+const classModule = require("./models/classModule");
+const videoLeassons = require("./models/videoLeasson");
+
+const userRoute = require("./routes/user-routes");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(cors());    
+app.use(cors());
+
+app.use("/user", userRoute);
 
 module.exports = app;

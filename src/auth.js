@@ -16,13 +16,13 @@ exports.authorize = function (req, res, next) {
 
   if (!token) {
     res.status(401).json({
-      message: "Acesso negado.",
+      message: "Access denied.",
     });
   } else {
     jwt.verify(token, global.SALT_KEY, function (error, decoded) {
       if (error) {
         res.status(401).json({
-          message: "Token inválido.",
+          message: "Invalid token",
         });
       } else {
         next();

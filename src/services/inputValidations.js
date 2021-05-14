@@ -1,7 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
-const EResponseValidate = require("../Enums/EResponseValidate");
+const EResponseValidate = require("../enums/EResponseValidate");
 const User = mongoose.model("users");
 
 exports.emailAlreadyRegistered = async (email) => {

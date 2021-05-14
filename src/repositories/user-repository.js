@@ -8,3 +8,26 @@ exports.registerUser = async (data) => {
     const res = await user.save();
     return res;
 }
+
+exports.getUserById = async (id) => {
+    const user = await User.findById(id);
+    return user;
+}
+
+exports.getAllUsers = async () => {
+    const users = await User.find({});
+    return users;
+}
+
+exports.updateUser = async (data, user) => {
+    user.name = data.name == null ? user.name : data.name;
+    user.email = data.email == null ? user.email : data.email;
+    user.password = data.password == null ? user.password : data.password;
+    const res = await user.save();
+    return res;
+}
+
+exports.deleteUser = async (id) => {
+    const res = await User.findByIdAndDelete(id);
+    return res;
+}

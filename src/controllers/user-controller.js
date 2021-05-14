@@ -3,37 +3,37 @@
 const _repository = require("../repositories/user-repository");
 const EResponseValidate = require("../enums/EResponseValidate");
 const validation = require("../services/inputValidations");
+const md5 = require("md5");
 
 exports.RegisterUser = async (req, res) => {
   const data = req.body;
 
-  if (validation.nameValidation(data.name) === EResponseValidate.invalid) {
+  if (validation.nameValidation(data.name) == EResponseValidate.invalid) {
     return res.status(400).send({
       message: "The name must contain at least 3 characters",
     });
   }
 
-  if (validation.emailValidation(data.email) === EResponseValidate.invalid) {
+  if (validation.emailValidation(data.email) == EResponseValidate.invalid) {
     return res.status(400).send({
       message: "Invalid email",
     });
   }
 
-//   const _email_res = await validation.emailAlreadyRegistered(data.email);
-//   if (_email_res === EResponseValidate.invalid) {
-//     return res.status(400).send({
-//       message: "E-mail already registered",
-//     });
-//   }
-
   if (
-    validation.passwordValidation(data.password) === EResponseValidate.invalid
+    validation.passwordValidation(data.password) == EResponseValidate.invalid
   ) {
     return res.status(400).send({
       message: "the password must contain at least 6 characters",
     });
   }
   try {
+    const _email_res = await validation.emailAlreadyRegistered(data.email);
+    if (_email_res == EResponseValidate.invalid) {
+      return res.status(400).send({
+        message: "E-mail already registered",
+      });
+    }
     var _res = await _repository.registerUser(data);
     res.status(201).send({ message: "user registered", item: _res });
   } catch {
@@ -41,10 +41,106 @@ exports.RegisterUser = async (req, res) => {
   }
 };
 
-exports.GetUserById = async (req, res) => {};
+exports.GetUserById = async (req, res) => {
+  const id = req.params.id;
 
-exports.DeleteUser = async (req, res) => {};
+  try {
+    var user = await _repository.getUserById(id);
+    if (user != null) return res.status(200).send(user);
+    res.status(404).send({ message: "user not found" });
+  } catch {
+    res.status(500).send({ message: "An error occurred with the request" });
+  }
+};
 
-exports.UpdateUser = async (req, res) => {};
+exports.UpdateUser = async (req, res) => {
+  const id = req.params.id;
+  const data = req.body;
+  const email = data.email;
+  const name = data.name;
+  const password = data.password;
 
-exports.GetAllUsers = async (req, res) => {};
+  if (name != null) {
+    var _res_name = validation.nameValidation(name);
+    if (_res_name == EResponseValidate.invalid)
+      return res.status(400).send({
+        message: "The name must contain at least 3 characters",
+      });
+  }
+
+  if (password != null) {
+    var _res_password = validation.passwordValidation(password);
+    if (_res_password == EResponseValidate.invalid)
+      return res.status(400).send({
+        message: "the password must contain at least 6 characters",
+      });
+  }
+  if (email != null) {
+    var _res_email = validation.emailValidation(email);
+    if (_res_email == EResponseValidate.invalid)
+      return res.status(400).send({
+        message: "Invalid E-mail",
+      });
+  }
+
+  try {
+    if (email != null) {
+      var _res_email_in_use = await validation.emailAlreadyRegistered(email);
+      if (_res_email_in_use == EResponseValidate.invalid)
+        return res.status(400).send({
+          message: "E-mail already registered",
+        });
+    }
+    var _user = await _repository.getUserById(id);
+    if (_user == null)
+      return res.status(404).send({
+        message: "user not found",
+      });
+    var _responseObject = await _repository.updateUser(data, _user);
+    res.status(200).send({
+      message: "user updated successfully",
+      item: _responseObject,
+    });
+  } catch {
+    res.status(500).send({ message: "An error occurred with the request" });
+  }
+};
+
+exports.DeleteUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const _user = await _repository.getUserById(id);
+    if (_user == null)
+      return res.status(404).send({
+        message: "User not found",
+      });
+    const _res = await _repository.deleteUser(id);
+    res.status(200).send({
+      message: "user successfully removed",
+      item: _res,
+    });
+  } catch {
+    res.status(500).send({ message: "An error occurred with the request" });
+  }
+};
+
+exports.GetAllUsers = async (req, res) => {
+    try{
+        let _returnList = [];
+        var _users = await _repository.getAllUsers();
+        if(_users.length > 0){
+
+            await Promise.all(_users.map(async value => {
+                let _object = {};
+                _object.id = value._id;
+                _object.name = value.name;
+                _object.email = value.email;
+                _returnList.push(_object);
+            }))
+        }
+        res.status(200).send(_users);
+    }catch{
+        res.status(500).send({ message: "An error occurred with the request" });
+    }
+};

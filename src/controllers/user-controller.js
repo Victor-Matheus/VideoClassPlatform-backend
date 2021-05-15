@@ -3,6 +3,7 @@
 const _repository = require("../repositories/user-repository");
 const EResponseValidate = require("../enums/EResponseValidate");
 const validation = require("../services/inputValidations");
+const authService = require("../auth");
 
 exports.RegisterUser = async (req, res) => {
   const data = req.body;
@@ -125,21 +126,53 @@ exports.DeleteUser = async (req, res) => {
 };
 
 exports.GetAllUsers = async (req, res) => {
-    try{
-        let _returnList = [];
-        var _users = await _repository.getAllUsers();
-        if(_users.length > 0){
-
-            await Promise.all(_users.map(async value => {
-                let _object = {};
-                _object.id = value._id;
-                _object.name = value.name;
-                _object.email = value.email;
-                _returnList.push(_object);
-            }))
-        }
-        res.status(200).send(_users);
-    }catch{
-        res.status(500).send({ message: "An error occurred with the request" });
+  try {
+    let _returnList = [];
+    var _users = await _repository.getAllUsers();
+    if (_users.length > 0) {
+      await Promise.all(
+        _users.map(async (value) => {
+          let _object = {};
+          _object.id = value._id;
+          _object.name = value.name;
+          _object.email = value.email;
+          _returnList.push(_object);
+        })
+      );
     }
+    res.status(200).send(_users);
+  } catch {
+    res.status(500).send({ message: "An error occurred with the request" });
+  }
+};
+
+exports.authenticate = async (req, res) => {
+  const data = req.body;
+  try {
+    const _user = await _repository.authenticate(data.email, data.password);
+
+    if (!_user) {
+      return res.status(401).send({
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = await authService.generateToken({
+      _id: _user._id,
+      email: _user.email,
+      name: _user.name,
+    });
+
+    res.status(201).send({
+      token: token,
+      data: {
+        email: _user.email,
+        nome: _user.nomeCompleto,
+      },
+    });
+  } catch (e) {
+    res.status(500).send({
+      message: "The user could not be authenticated",
+    });
+  }
 };

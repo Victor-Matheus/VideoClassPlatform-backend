@@ -3,6 +3,7 @@ const app = require("../../src/app");
 const mongoose = require("mongoose");
 const validate = require("../../src/services/inputValidations");
 const EResponseValidate = require("../../src/enums/EResponseValidate");
+const authService = require("../../src/auth");
 
 const Users = mongoose.model("users");
 
@@ -14,26 +15,41 @@ describe("User route", () => {
 
   let userId;
   let userEmail;
+  let token;
+
+  const setToken = async () => {
+    token = await authService.generateToken({
+      name: "test",
+    });
+  };
+  setToken();
 
   it("must create a user if valid data and integration between components", async () => {
-    const response = await request(app).post("/user/").send({
-      name: "test",
-      email: "test@email.com",
-      password: "123456",
-    });
+    const response = await request(app)
+      .post("/user/")
+      .set({ "x-access-token": `${token}` })
+      .send({
+        name: "test",
+        email: "test@email.com",
+        password: "123456",
+      });
     userId = response.body.item._id;
     userEmail = response.body.item.email;
     expect(response.status).toBe(201);
   });
 
   it("must return a user from his ID if integration between the components", async () => {
-    const response = await request(app).get(`/user/${userId}`);
+    const response = await request(app)
+      .get(`/user/${userId}`)
+      .set({ "x-access-token": `${token}` });
 
     expect(response.status).toBe(200);
   });
 
   it("must list all users if integration between components", async () => {
-    const response = await request(app).get(`/user/`);
+    const response = await request(app)
+      .get(`/user/`)
+      .set({ "x-access-token": `${token}` });
 
     expect(response.status).toBe(200);
   });
@@ -45,23 +61,28 @@ describe("User route", () => {
   });
 
   it("must return EResponseValidate.invalid if email is already registered", async () => {
-    const email = userEmail
+    const email = userEmail;
     const response = await validate.emailAlreadyRegistered(email);
     expect(response).toBe(EResponseValidate.invalid);
   });
 
   it("must update a user if integration between components", async () => {
-    const response = await request(app).put(`/user/${userId}`).send({
-      name: "test test",
-      email: "test_1@email.com",
-      password: "12345678",
-    });
+    const response = await request(app)
+      .put(`/user/${userId}`)
+      .set({ "x-access-token": `${token}` })
+      .send({
+        name: "test test",
+        email: "test_1@email.com",
+        password: "12345678",
+      });
 
     expect(response.status).toBe(200);
   });
 
   it("must delete a user given his ID if integration between components", async () => {
-    const response = await request(app).delete(`/user/${userId}`);
+    const response = await request(app)
+      .delete(`/user/${userId}`)
+      .set({ "x-access-token": `${token}` });
 
     expect(response.status).toBe(200);
   });

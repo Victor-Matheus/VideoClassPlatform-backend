@@ -3,7 +3,6 @@
 const _repository = require("../repositories/user-repository");
 const EResponseValidate = require("../enums/EResponseValidate");
 const validation = require("../services/inputValidations");
-const md5 = require("md5");
 
 exports.RegisterUser = async (req, res) => {
   const data = req.body;

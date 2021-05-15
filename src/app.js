@@ -26,6 +26,8 @@ const classModule = require("./models/classModule");
 const videoLeassons = require("./models/videoLeasson");
 
 const userRoute = require("./routes/user-routes");
+const classModuleRoute = require("./routes/classModule-route");
+const videoLeassonRoute = require("./routes/videoLeasson-route");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -33,5 +35,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/user", userRoute);
+app.use("/module", classModuleRoute);
+app.use("/leasson", videoLeassonRoute);
 
 module.exports = app;

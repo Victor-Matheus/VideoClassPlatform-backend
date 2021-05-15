@@ -10,7 +10,7 @@ const schema = new Schema({
     },
     classNotes: {
       type: String,
-      required: true
+      required: false
     },
     link: {
       type: String,

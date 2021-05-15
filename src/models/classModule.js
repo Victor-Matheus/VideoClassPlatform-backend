@@ -15,7 +15,7 @@ const schema = new Schema({
     videoLeassons: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "videoLeassons",
-      required: true,
+      required: false,
     }],
   });
   

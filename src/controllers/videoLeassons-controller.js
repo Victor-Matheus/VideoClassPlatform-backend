@@ -25,7 +25,8 @@ exports.RegisterVideoLeasson = async (req, res) => {
       });
     const _videoLeasson = await _repository.registerVideoLeasson(data);
     const _module_response = await _moduleRepository.addVideoLeasson(
-      _videoLeasson
+      _module._id,
+      _videoLeasson._id
     );
     if (_module_response == EDbStatusReturn.DB_SAVED_OK)
       return res.status(201).send({

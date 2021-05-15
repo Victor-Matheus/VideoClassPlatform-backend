@@ -22,11 +22,6 @@ exports.UpdateClassModule = async (req, res) => {
   const id = req.params.id;
   const data = req.body;
 
-  if (data.title == null)
-    return res
-      .status(400)
-      .send({ message: "the class module must have a title" });
-
   try {
     var _module = await _repository.getClassModuleById(id);
     if (_module == null)

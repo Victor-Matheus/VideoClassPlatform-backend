@@ -35,7 +35,11 @@ exports.RegisterUser = async (req, res) => {
       });
     }
     var _res = await _repository.registerUser(data);
-    res.status(201).send({ message: "user registered", item: _res });
+    let _returnObject = {};
+    _returnObject._id = _res._id;
+    _returnObject.name = _res.name;
+    _returnObject.email = _res.email;
+    res.status(201).send({ message: "user registered", item: _returnObject });
   } catch {
     res.status(500).send({ message: "An error occurred with the request" });
   }
@@ -46,7 +50,13 @@ exports.GetUserById = async (req, res) => {
 
   try {
     var user = await _repository.getUserById(id);
-    if (user != null) return res.status(200).send(user);
+    if (user != null) {
+      let _returnObject = {};
+      _returnObject._id = user._id;
+      _returnObject.name = user.name;
+      _returnObject.email = user.email;
+      return res.status(200).send(_returnObject);
+    }
     res.status(401).send({ message: "user not found" });
   } catch {
     res.status(500).send({ message: "An error occurred with the request" });
@@ -140,7 +150,7 @@ exports.GetAllUsers = async (req, res) => {
         })
       );
     }
-    res.status(200).send(_users);
+    res.status(200).send(_returnList);
   } catch {
     res.status(500).send({ message: "An error occurred with the request" });
   }

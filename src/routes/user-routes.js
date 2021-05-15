@@ -6,7 +6,7 @@ const authService = require("../auth");
 const userController = require("../controllers/user-controller");
 
 router.post("/authenticate", userController.authenticate);
-router.post("/", authService.authorize, userController.RegisterUser);
+router.post("/", userController.RegisterUser);
 router.put("/:id", authService.authorize, userController.UpdateUser);
 router.get("/:id", authService.authorize, userController.GetUserById);
 router.get("/", authService.authorize, userController.GetAllUsers);

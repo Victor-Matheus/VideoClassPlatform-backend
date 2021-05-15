@@ -69,7 +69,7 @@ exports.GetVideoLeassonById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const _videoLeasson = _repository.getVideoLeassonById(id);
+    const _videoLeasson = await _repository.getVideoLeassonById(id);
     if (_videoLeasson == null)
       return res.status(401).send({
         message: "Video leasson not found",
@@ -82,7 +82,6 @@ exports.GetVideoLeassonById = async (req, res) => {
 
 exports.GetAllVideoLeassonsFromModule = async (req, res) => {
   const moduleId = req.params.id;
-
   try {
     const _module = await _moduleRepository.getClassModuleById(moduleId);
     if (_module == null)

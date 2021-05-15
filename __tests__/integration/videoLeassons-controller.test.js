@@ -8,8 +8,8 @@ const VideoLeasson = mongoose.model("videoLeassons");
 
 describe("Video Leassons Route", () => {
   afterAll(async () => {
-    await ClassModule.deleteMany({});
     await VideoLeasson.deleteMany({});
+    await ClassModule.deleteMany({});
     mongoose.connection.close();
   });
 
@@ -49,6 +49,14 @@ describe("Video Leassons Route", () => {
     expect(response.status).toBe(201);
   });
 
+  it("given a module, it should return all videos leassons if integration between components", async () => {
+    const response = await request(app)
+      .get(`/leasson/module/${classModuleId}`)
+      .set({ "x-access-token": `${token}` });
+
+    expect(response.status).toBe(200);
+  });
+
   it("must update a leasson given its id if integration between components", async () => {
     const response = await request(app)
       .put(`/leasson/${leassonId}`)
@@ -64,14 +72,6 @@ describe("Video Leassons Route", () => {
   it("must return a leasson given its id if integration between components", async () => {
     const response = await request(app)
       .get(`/leasson/${leassonId}`)
-      .set({ "x-access-token": `${token}` });
-
-    expect(response.status).toBe(200);
-  });
-
-  it("given a module, it should return all videos leassons if integration between components", async () => {
-    const response = await request(app)
-      .get(`/leasson/module/${classModuleId}`)
       .set({ "x-access-token": `${token}` });
 
     expect(response.status).toBe(200);

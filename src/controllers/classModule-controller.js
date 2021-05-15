@@ -30,7 +30,7 @@ exports.UpdateClassModule = async (req, res) => {
   try {
     var _module = await _repository.getClassModuleById(id);
     if (_module == null)
-      return res.status(404).send({ message: "Class Module not found" });
+      return res.status(401).send({ message: "Class Module not found" });
     var _updated_module = await _repository.updateClassModule(data, _module);
     res.status(200).send({
       message: "Class module updated successfully",
@@ -47,7 +47,7 @@ exports.GetClassModuleById = async (req, res) => {
   try {
     const _module = await _repository.getClassModuleById(id);
     if (_module == null)
-      return res.status(404).send({ message: "Class Module not found" });
+      return res.status(401).send({ message: "Class Module not found" });
     res.status(200).send(_module);
   } catch {
     res.status(500).send({ message: "An error occurred with the request" });
@@ -69,7 +69,7 @@ exports.DeleteClassModule = async (req, res) => {
   try {
     const _module = await _repository.getClassModuleById(id);
     if (_module == null)
-      return res.status(404).send({ message: "Class Module not found" });
+      return res.status(401).send({ message: "Class Module not found" });
     const _res = await _repository.deleteClassModule(id);
     res.status(200).send({
       message: "Class Module deleted successfully",

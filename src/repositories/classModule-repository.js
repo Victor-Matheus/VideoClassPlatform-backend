@@ -1,6 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
+const EDbStatusReturn = require("../enums/EDbStatusReturn");
 const Module = mongoose.model("classModules");
 
 exports.registerClassModule = async (data) => {
@@ -32,4 +33,15 @@ exports.updateClassModule = async (data, module) => {
 exports.deleteClassModule = async (id) => {
   const res = await Module.findByIdAndDelete(id);
   return res;
+};
+
+exports.addVideoLeasson = async (moduleId, leassonId) => {
+  try {
+    await Module.findByIdAndUpdate(moduleId, {
+      $push: { videoLeassons: leassonId },
+    });
+    return EDbStatusReturn.DB_SAVED_OK;
+  } catch {
+    return EDbStatusReturn.DB_GENERAL_EXCEPTION;
+  }
 };

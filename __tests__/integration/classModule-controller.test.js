@@ -3,7 +3,6 @@ const app = require("../../src/app");
 const mongoose = require("mongoose");
 
 const ClassModule = mongoose.model("classModules");
-const Leasson = mongoose.model("videoLeassons")
 
 describe("Class Modules Route", () => {
   afterAll(async () => {

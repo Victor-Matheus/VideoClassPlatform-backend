@@ -46,7 +46,7 @@ exports.GetUserById = async (req, res) => {
   try {
     var user = await _repository.getUserById(id);
     if (user != null) return res.status(200).send(user);
-    res.status(404).send({ message: "user not found" });
+    res.status(401).send({ message: "user not found" });
   } catch {
     res.status(500).send({ message: "An error occurred with the request" });
   }
@@ -111,7 +111,7 @@ exports.DeleteUser = async (req, res) => {
   try {
     const _user = await _repository.getUserById(id);
     if (_user == null)
-      return res.status(404).send({
+      return res.status(401).send({
         message: "User not found",
       });
     const _res = await _repository.deleteUser(id);

@@ -3,6 +3,7 @@
 const mongoose = require("mongoose");
 const EDbStatusReturn = require("../enums/EDbStatusReturn");
 const Module = mongoose.model("classModules");
+const _leassonRepository = require("../repositories/videoLeassons-repository");
 
 exports.registerClassModule = async (data) => {
   const module = new Module(data);
@@ -31,6 +32,10 @@ exports.updateClassModule = async (data, module) => {
 };
 
 exports.deleteClassModule = async (id) => {
+  const _module = await Module.findById(id);
+  await Promise.all(_module.videoLeassons.map(async (v) => {
+    await _leassonRepository.deleteVideoLeasson(v);
+  }))
   const res = await Module.findByIdAndDelete(id);
   return res;
 };
